@@ -2,9 +2,15 @@ package org.team751.framework;
 
 import org.team751.framework.util.CompetitionState;
 
+import edu.wpi.first.wpilibj.Timer;
+
 /**
  * A thread that contains a robot task. Operations in this task can safely block
- * without freezing the robot.
+ * without freezing the robot. <br />
+ * <br />
+ * Note that the methods in this class are called as frequently as possible. You
+ * must add a call to {@link Thread#sleep(long)} or {@link Timer#delay(double)}
+ * to prevent this task from running continuously and causing 100% CPU usage.
  * 
  * @author Sam Crow
  */
@@ -12,6 +18,17 @@ public abstract class RobotTask extends Thread {
 
 	/** The current phase of competition */
 	private volatile CompetitionState state;
+
+	/**
+	 * The minimum time, in seconds, that a task ({@link RobotTask#disabled()},
+	 * {@link RobotTask#autonomous()}, or {@link RobotTask#teleop()}) is
+	 * expected to take. If one of those method calls takes less than this time,
+	 * it is likely that the programmer didn't use {@link Thread#sleep(long)} or
+	 * {@link Timer#delay(double)} to prevent continous task operation and 100%
+	 * CPU usage. In this event, a warning will be printed to {@link System#err}
+	 * .
+	 */
+	public static final float kMinTaskTime = 0.01f;
 
 	public final void run() {
 		while (true) {
@@ -26,7 +43,14 @@ public abstract class RobotTask extends Thread {
 
 			if (state == CompetitionState.kDisabled) {
 				try {
+					Timer timer = new Timer();
+					timer.start();
+					
 					disabled();
+					
+					if(timer.get() < kMinTaskTime) {
+						timingWarning("disabled");
+					}
 				} catch (InterruptedException e) {
 					// Thread interrupted, meaning the state has changed.
 					// Go on to the next iteration of the loop and check
@@ -37,7 +61,14 @@ public abstract class RobotTask extends Thread {
 
 			else if (state == CompetitionState.kAutonomous) {
 				try {
+					Timer timer = new Timer();
+					timer.start();
+					
 					autonomous();
+					
+					if(timer.get() < kMinTaskTime) {
+						timingWarning("autonomous");
+					}
 				} catch (InterruptedException e) {
 					// Thread interrupted, meaning the state has changed.
 					// Go on to the next iteration of the loop and check
@@ -48,7 +79,14 @@ public abstract class RobotTask extends Thread {
 
 			else if (state == CompetitionState.kTeleop) {
 				try {
+					Timer timer = new Timer();
+					timer.start();
+					
 					teleop();
+					
+					if(timer.get() < kMinTaskTime) {
+						timingWarning("teleop");
+					}
 				} catch (InterruptedException e) {
 					// Thread interrupted, meaning the state has changed.
 					// Go on to the next iteration of the loop and check
@@ -85,7 +123,9 @@ public abstract class RobotTask extends Thread {
 	 *             If the task has been interrupted. You don't need to worry
 	 *             about this. The robot task handler will deal with it.
 	 */
-	protected void disabled() throws InterruptedException {};
+	protected void disabled() throws InterruptedException {
+		sleep((long) (kMinTaskTime * 1000));
+	};
 
 	/**
 	 * The robot task handler calls this method as frequently as possible while
@@ -95,7 +135,9 @@ public abstract class RobotTask extends Thread {
 	 *             If the task has been interrupted. You don't need to worry
 	 *             about this. The robot task handler will deal with it.
 	 */
-	protected void autonomous() throws InterruptedException {};
+	protected void autonomous() throws InterruptedException {
+		sleep((long) (kMinTaskTime * 1000));
+	};
 
 	/**
 	 * The robot task handler calls this method as frequently as possible while
@@ -105,7 +147,9 @@ public abstract class RobotTask extends Thread {
 	 *             If the task has been interrupted. You don't need to worry
 	 *             about this. The robot task handler will deal with it.
 	 */
-	protected void teleop() throws InterruptedException {};
+	protected void teleop() throws InterruptedException {
+		sleep((long) (kMinTaskTime * 1000));
+	};
 
 	/**
 	 * Check if the thread has been interrupted. An interrupt happens when the
@@ -141,5 +185,16 @@ public abstract class RobotTask extends Thread {
 			throw new InterruptedException(
 					"Interrupted while running checkInterrupt()");
 		}
+	}
+	
+	/**
+	 * Print a warning to {@link System#err} telling the user that a task
+	 * didn't take long enough to complete and probably lacks a call to
+	 * {@link Thread#sleep(long)} or {@link Timer#delay(double)}.
+	 * @param methodName The name of the method that was called, not including
+	 * parenthesis. For example, "disabled", "autonomous", or "teleop".
+	 */
+	private void timingWarning(String methodName) {
+		System.err.println("Your "+methodName+"() method took less than "+kMinTaskTime+" seconds to complete. Did you forget to sleep() or Timer.delay()?");
 	}
 }
