@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Framework Test Robot</name>
+	<comment></comment>
+	<projects>
+		<project>751 Inertial Navigation</project>
+		<project>751Framework</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>edu.wpi.first.javadev.projects.antbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>edu.wpi.first.javadev.projects.nature.FRCProjectNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+</projectDescription>

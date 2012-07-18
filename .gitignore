@@ -1,4 +1,6 @@
 
 /doc/*
 /751ThreadedRobotFramework-1.0.jar
-/bin/*
+/bin/
+
+/examples/Basic Framework Test Robot/build/*
