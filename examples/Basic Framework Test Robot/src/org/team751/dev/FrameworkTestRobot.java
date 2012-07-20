@@ -57,9 +57,10 @@ public class FrameworkTestRobot extends ThreadedRobot {
 		addTask(new InertialNavigationTask(new INavDataProvider() {
 
 			public double getHeading() throws InterruptedException {
+				double heading = 0;
 				Gyro gyroscope = (Gyro) SharedData.get(gyro);
 				try {
-					double heading = gyroscope.getAngle();
+					heading = gyroscope.getAngle();
 				} finally {
 					SharedData.release(gyro);
 				}
@@ -67,9 +68,12 @@ public class FrameworkTestRobot extends ThreadedRobot {
 			}
 
 			public double getAcceleration() throws InterruptedException {
+				
+				double acceleration = 0;
+				
 				ADXL345_I2C accel = (ADXL345_I2C) SharedData.get(accelerometer);
 				try {
-					double acceleration = accel
+					acceleration = accel
 							.getAcceleration(ADXL345_I2C.Axes.kY);
 				} finally {
 					SharedData.release(accelerometer);
@@ -84,13 +88,15 @@ public class FrameworkTestRobot extends ThreadedRobot {
 		addTask(new RobotTask() {
 
 			protected void teleop() throws InterruptedException {
+				
+				double x = 0, y = 0;
 
 				// Get a reference to joystick zero
 				Joystick joystick = (Joystick) SharedData.get(joysticks[0]);
 				try {
 					// Get values from the joystick
-					double x = joystick.getX();
-					double y = joystick.getY();
+					x = joystick.getX();
+					y = joystick.getY();
 
 				} finally {
 					// Done using the joystick; release it so that other tasks
