@@ -35,7 +35,7 @@ public class FrameworkTestRobot extends ThreadedRobot {
 	public static final Key driveRightController = new Key();
 
 	public static final Key accelerometer = new Key();
-	
+
 	public static final Key gyro = new Key();
 
 	public void robotInit() {
@@ -53,24 +53,31 @@ public class FrameworkTestRobot extends ThreadedRobot {
 				new ADXL345_I2C(SensorBase.getDefaultDigitalModule(),
 						ADXL345_I2C.DataFormat_Range.k4G));
 		SharedData.put(gyro, new Gyro(1));
-		
-		addTask(new InertialNavigationTask(new INavDataProvider(){
+
+		addTask(new InertialNavigationTask(new INavDataProvider() {
 
 			public double getHeading() throws InterruptedException {
 				Gyro gyroscope = (Gyro) SharedData.get(gyro);
-				double heading = gyroscope.getAngle();
-				SharedData.release(gyro);
+				try {
+					double heading = gyroscope.getAngle();
+				} finally {
+					SharedData.release(gyro);
+				}
 				return heading;
 			}
 
 			public double getAcceleration() throws InterruptedException {
 				ADXL345_I2C accel = (ADXL345_I2C) SharedData.get(accelerometer);
-				double acceleration = accel.getAcceleration(ADXL345_I2C.Axes.kY);
-				SharedData.release(accelerometer);
-				
+				try {
+					double acceleration = accel
+							.getAcceleration(ADXL345_I2C.Axes.kY);
+				} finally {
+					SharedData.release(accelerometer);
+				}
+
 				return acceleration;
 			}
-			
+
 		}));
 
 		// Add drive task
@@ -80,12 +87,17 @@ public class FrameworkTestRobot extends ThreadedRobot {
 
 				// Get a reference to joystick zero
 				Joystick joystick = (Joystick) SharedData.get(joysticks[0]);
-				// Get values from the joystick
-				double x = joystick.getX();
-				double y = joystick.getY();
-				// Done using the joystick; release it so that other tasks can
-				// use it
-				SharedData.release(joysticks[0]);
+				try {
+					// Get values from the joystick
+					double x = joystick.getX();
+					double y = joystick.getY();
+
+				} finally {
+					// Done using the joystick; release it so that other tasks
+					// can
+					// use it
+					SharedData.release(joysticks[0]);
+				}
 
 				SpeedController left = (SpeedController) SharedData
 						.get(driveLeftController);
