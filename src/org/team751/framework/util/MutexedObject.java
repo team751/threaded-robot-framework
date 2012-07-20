@@ -1,6 +1,8 @@
 package org.team751.framework.util;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Stores an Object and a corresponding mutex (really a {@link Semaphore}) to restrict
@@ -17,9 +19,9 @@ public class MutexedObject {
 	private Object object;
 	
 	/**
-	 * The semaphore used to restrict access
+	 * The lock on the object
 	 */
-	private Semaphore mutex = new Semaphore(1, true);
+	private Lock lock = new ReentrantLock(true);
 	
 	/**
 	 * Constructor
@@ -37,7 +39,7 @@ public class MutexedObject {
 	 */
 	public Object get() throws InterruptedException {
 		
-		mutex.acquire();
+		lock.lock();
 		
 		return object;
 	}
@@ -48,6 +50,6 @@ public class MutexedObject {
 	 * you should not access the object after calling this method.
 	 */
 	public void release() {
-		mutex.release();
+		lock.unlock();
 	}
 }
