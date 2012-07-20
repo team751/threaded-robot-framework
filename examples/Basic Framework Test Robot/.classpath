@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/751 Inertial Navigation"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/751 Threaded Framework"/>
 	<classpathentry kind="lib" path="/Applications/Eclipse Juno/plugins/edu.wpi.first.javadev.sunspotfrcsdk_1.0.7.1/sunspotfrcsdk/lib/WPILibJ/classes.jar"/>
 	<classpathentry kind="lib" path="/Applications/Eclipse Juno/plugins/edu.wpi.first.javadev.sunspotfrcsdk_1.0.7.1/sunspotfrcsdk/lib/squawk_device.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/751 Inertial Navigation"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/751Framework"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
